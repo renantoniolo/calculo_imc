@@ -10,6 +10,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
 
   // controller's
   TextEditingController peso = new TextEditingController();
@@ -18,12 +19,12 @@ class _HomeState extends State<Home> {
   String _resultadoText = "";
 
   void _ClearText() {
-
     // seta a interface
     setState(() {
       peso.text = "";
       altura.text = "";
       _resultadoText = "";
+      _formKey = new GlobalKey<FormState>(); 
     });
   }
 
@@ -56,7 +57,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Calculadora IMC"), 
+          title: Text("Calculadora IMC"),
           centerTitle: true,
           backgroundColor: Colors.blueGrey,
           actions: <Widget>[
@@ -69,57 +70,64 @@ class _HomeState extends State<Home> {
         ),
         backgroundColor: Colors.white70,
         body: SingleChildScrollView(
-          padding: new EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Icon(Icons.person, size: 125, color: Colors.blueGrey),
-              TextField(
-                keyboardType: TextInputType.number,
-                cursorColor: Colors.blueGrey,
-                maxLength: 2,
-                decoration: InputDecoration(
-                    labelText: "Peso Kg",
-                    labelStyle: TextStyle(color: Colors.blueGrey)),
-                style: TextStyle(color: Colors.blueGrey, fontSize: 32),
-                controller: peso,
-              ),
-              TextField(
-                keyboardType: TextInputType.number,
-                cursorColor: Colors.blueGrey,
-                maxLength: 4,
-                decoration: InputDecoration(
-                    labelText: "Altura",
-                    labelStyle: TextStyle(color: Colors.blueGrey)),
-                style: TextStyle(color: Colors.blueGrey, fontSize: 32),
-                controller: altura,
-              ),
-              Container(
-                  height: 45.0,
-                  margin: new EdgeInsets.symmetric(vertical: 10.0),
-                  child: RaisedButton(
-                    color: Colors.blueGrey,
-                    textColor: Colors.white70,
-                    child: Text(
-                      "Calcular IMC",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () {
-                      _Calcular();
+            padding: new EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Icon(Icons.person, size: 125, color: Colors.blueGrey),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    cursorColor: Colors.blueGrey,
+                    maxLength: 2,
+                    decoration: InputDecoration(
+                        labelText: "Peso Kg",
+                        labelStyle: TextStyle(color: Colors.blueGrey)),
+                    style: TextStyle(color: Colors.blueGrey, fontSize: 32),
+                    controller: peso,
+                    validator: (value) {
+                      if (value.isEmpty) return "Campo vazio!";
                     },
-                  )),
-              Text(
-                _resultadoText,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 22.0,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black38)
-              )
-            ]
-          )
-        ));
+                  ),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    cursorColor: Colors.blueGrey,
+                    maxLength: 4,
+                    decoration: InputDecoration(
+                        labelText: "Altura",
+                        labelStyle: TextStyle(color: Colors.blueGrey)),
+                    style: TextStyle(color: Colors.blueGrey, fontSize: 32),
+                    controller: altura,
+                    validator: (value) {
+                      if (value.isEmpty) return "Campo vazio!";
+                    },
+                  ),
+                  Container(
+                      height: 45.0,
+                      margin: new EdgeInsets.symmetric(vertical: 10.0),
+                      child: RaisedButton(
+                        color: Colors.blueGrey,
+                        textColor: Colors.white70,
+                        child: Text(
+                          "Calcular IMC",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        onPressed: () {
+                          if (_formKey.currentState.validate()) {
+                            _Calcular();
+                          }
+                        },
+                      )),
+                  Text(_resultadoText,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 22.0,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black38))
+                ]),
+            )));
   }
 }
